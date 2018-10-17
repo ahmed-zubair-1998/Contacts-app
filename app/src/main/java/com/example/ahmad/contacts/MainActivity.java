@@ -1,7 +1,9 @@
 package com.example.ahmad.contacts;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
@@ -13,6 +15,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,8 +23,9 @@ public class MainActivity extends AppCompatActivity {
     private Context context;
     private Contact contact;
     private String name;
+    private String title;
     private ArrayList<String> emails;
-    private ArrayList<Integer> numbers;
+    private ArrayList<Long> numbers;
     private ArrayList<EditText> emails_v;
     private ArrayList<EditText> numbers_v;
     private ArrayList<String> emails_id;
@@ -58,9 +62,11 @@ public class MainActivity extends AppCompatActivity {
             numbers_id.add(e.getText().toString());
         }
         EditText name_v = (EditText) findViewById(R.id.name_input);
+        EditText title_v = (EditText) findViewById(R.id.title_input);
         outState.putStringArrayList("emails_id", emails_id);
         outState.putStringArrayList("numbers_id", numbers_id);
         outState.putString("name", name_v.getText().toString());
+        outState.putString("title", title_v.getText().toString());
     }
 
     @Override
@@ -68,12 +74,14 @@ public class MainActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
 
         EditText name_v = (EditText) findViewById(R.id.name_input);
+        EditText title_v = (EditText) findViewById(R.id.title_input);
         EditText email, number;
         email = (EditText) findViewById(R.id.email_input);
         number = (EditText) findViewById(R.id.phone_input);
 
 
         name_v.setText(savedInstanceState.getString("name",""));
+        title_v.setText(savedInstanceState.getString("title",""));
         emails_id = savedInstanceState.getStringArrayList("emails_id");
         numbers_id=savedInstanceState.getStringArrayList("numbers_id");
 
@@ -156,21 +164,30 @@ public class MainActivity extends AppCompatActivity {
 
     public void save(View view) {
         EditText name_v = (EditText) findViewById(R.id.name_input);
+        EditText title_v = (EditText) findViewById(R.id.title_input);
         name = name_v.getText().toString();
+        title = title_v.getText().toString();
         if("".equals(name)) {
             Toast t = Toast.makeText(context, "Name Missing", Toast.LENGTH_SHORT);
             t.show();
             return;
         }
+        if(name.split(" ").length != 2){
+            Toast t = Toast.makeText(context, "Name format should be\nFirstName LastName", Toast.LENGTH_SHORT);
+            t.show();
+            return;
+        }
+
         for (EditText email_v : emails_v) {
             String s = email_v.getText().toString();
-            if(! "".equals(s))
+            if(! "".equals(s)) {
                 emails.add(s);
+            }
         }
         for(EditText number_v : numbers_v){
             String s = number_v.getText().toString();
             if(! "".equals(s)){
-                numbers.add(Integer.parseInt(s));
+                numbers.add(Long.parseLong(s));
             }
         }
         if(emails.size() == 0){
@@ -183,11 +200,15 @@ public class MainActivity extends AppCompatActivity {
             t.show();
             return;
         }
-        contact = new Contact(name, emails, numbers);
-        Log.i("MyActivity", String.valueOf(contact));
+        contact = new Contact(name, title, emails, numbers);
         clear();
+        Log.d("d",emails.toString());
         Toast t = Toast.makeText(context, "Saved!", Toast.LENGTH_SHORT);
         t.show();
+        Intent intent = new Intent();
+        intent.putExtra("contact", (Serializable) contact);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     private void clear() {
@@ -213,5 +234,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void cancel(View view) {
         clear();
+        Intent intent = new Intent();
+        intent.putExtra("contact", (Serializable) null);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }
