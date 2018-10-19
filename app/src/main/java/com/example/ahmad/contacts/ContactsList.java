@@ -90,4 +90,17 @@ public class ContactsList extends AppCompatActivity {
         }
         createView();
     }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("contacts", contacts);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        contacts = (ArrayList<Contact>) savedInstanceState.getSerializable("contacts");
+        createView();
+    }
 }

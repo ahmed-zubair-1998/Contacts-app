@@ -22,20 +22,16 @@ public class ContactsDetails extends AppCompatActivity {
         TextView title = (TextView) findViewById(R.id.title);
         LinearLayout emails = (LinearLayout) findViewById(R.id.emails_layout);
         LinearLayout phones = (LinearLayout) findViewById(R.id.phones_layout);
-        Log.d("aa", "emails\n" + contact.emails.toString());
-        Log.d("aa", "phones\n" + contact.numbers.toString());
 
         name.setText(contact.name);
         title.setText(contact.title);
         for (String email : contact.emails) {
-            Log.d("aa", email);
             TextView tv = new TextView(this);
             tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             tv.setText(email);
             emails.addView(tv);
         }
         for (Long number : contact.numbers) {
-            Log.d("aaa", number.toString());
             TextView tv = new TextView(this);
             tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             tv.setText(number.toString());

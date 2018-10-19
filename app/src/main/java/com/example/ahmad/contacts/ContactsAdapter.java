@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 
 public class ContactsAdapter extends ArrayAdapter<Contact> implements Filterable {
-    private ArrayList<Character> header_arr;
+    private ArrayList<Boolean> header_arr;
     private ArrayList<Contact> arr;
     private ArrayList<Contact> filtered_arr;
     private Filter filter;
@@ -54,22 +54,33 @@ public class ContactsAdapter extends ArrayAdapter<Contact> implements Filterable
         }
         TextView tv = (TextView) convertView.findViewById(R.id.contact_name);
         tv.setText(contact.name);
-        Character c = contact.name.split(" ")[1].charAt(0);
         TextView tv2 = (TextView) convertView.findViewById(R.id.contact_desc);
         tv2.setText(contact.title);
         TextView header = (TextView) convertView.findViewById(R.id.head);
-        header.setText(c.toString());
+        headerAtIndex();
+        if(header_arr.get(position)){
+            Character a = filtered_arr.get(position).name.split(" ")[1].charAt(0);
+            header.setText(a.toString().toUpperCase());
+        }
 
-        if(!header_arr.contains(c)){
-            header_arr.add(c);
-            tv2.setText(c.toString());
-            header.setVisibility(View.VISIBLE);
-        }
-        else{
-            header.setVisibility(View.INVISIBLE);
-        }
 
         return convertView;
+    }
+
+    private void headerAtIndex() {
+        Character prev = '0';
+        for (Contact contact : filtered_arr) {
+            Character c = contact.name.split(" ")[1].charAt(0);
+            c = c.toString().toLowerCase().charAt(0);
+            if(c != prev){
+                header_arr.add(true);
+            }
+            else {
+                header_arr.add(false);
+            }
+            prev = c;
+        }
+
     }
 
     @NonNull
